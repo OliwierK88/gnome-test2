@@ -55,3 +55,51 @@
     toggle.textContent = off ? 'Flashlight: off' : 'Flashlight: on';
   });
 })();
+
+// Karuzela screenshotów: strzałki, kropki i przewijanie palcem/myszą
+(function () {
+  var track = document.querySelector('.shots');
+  var prev = document.querySelector('.carousel-btn.prev');
+  var next = document.querySelector('.carousel-btn.next');
+  var dotsBox = document.querySelector('.carousel-dots');
+  if (!track || !prev || !next || !dotsBox) return;
+
+  var slides = track.children;
+  var dots = [];
+
+  // Przewija do slajdu o podanym numerze (zapętla się na końcach).
+  // Płynnie tylko do sąsiedniego slajdu; dalsze skoki (zawinięcie, kropki) są natychmiastowe,
+  // żeby nie było widać przelatywania przez wszystkie slajdy po drodze.
+  function go(i) {
+    var from = current();
+    var n = (i + slides.length) % slides.length;
+    var near = Math.abs(n - from) === 1;
+    track.scrollTo({ left: n * track.clientWidth, behavior: near ? 'smooth' : 'instant' });
+  }
+
+  function current() {
+    return Math.round(track.scrollLeft / track.clientWidth);
+  }
+
+  for (var i = 0; i < slides.length; i++) {
+    (function (n) {
+      var d = document.createElement('button');
+      d.type = 'button';
+      d.title = String(n + 1);
+      d.addEventListener('click', function () { go(n); });
+      dotsBox.appendChild(d);
+      dots.push(d);
+    })(i);
+  }
+
+  function update() {
+    var c = current();
+    for (var j = 0; j < dots.length; j++) dots[j].classList.toggle('active', j === c);
+  }
+
+  prev.addEventListener('click', function () { go(current() - 1); });
+  next.addEventListener('click', function () { go(current() + 1); });
+  track.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', function () { track.scrollLeft = current() * track.clientWidth; });
+  update();
+})();
