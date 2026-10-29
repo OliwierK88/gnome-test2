@@ -1,0 +1,249 @@
+/* Padding i ramki wliczają się do szerokości elementu */
+* { box-sizing: border-box; }
+
+body
+{
+  margin: 0;
+  position: relative;
+  background: #060808;
+  color: #c3cac6;
+  font: 17px/1.65 Georgia, "Times New Roman", serif;
+}
+
+a { color: inherit; }
+em { color: #b3363a; font-style: normal; font-weight: 600; }
+
+.hero
+{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 980px;
+  padding: 72px 20px 56px;
+  text-align: center;
+}
+
+/* Tło po bokach strony, od góry do dołu (przyklejone do okna przeglądarki).
+   Maska ukrywa środek, żeby obrazek był widoczny tylko przy krawędziach. */
+body::before
+{
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url("images/tlo2.png") center / cover no-repeat;
+  -webkit-mask-image: linear-gradient(to right,
+    #000 0, #000 calc(50% - 700px), transparent calc(50% - 560px),
+    transparent calc(50% + 560px), #000 calc(50% + 700px), #000 100%);
+  mask-image: linear-gradient(to right,
+    #000 0, #000 calc(50% - 700px), transparent calc(50% - 560px),
+    transparent calc(50% + 560px), #000 calc(50% + 700px), #000 100%);
+}
+
+/* Logo gry: maks. 560 px szerokości, skaluje się na mniejszych ekranach */
+.hero > img { display: block; width: min(560px, 100%); height: auto; margin-bottom: 24px; }
+
+h1
+{
+  margin: 0 0 32px;
+  font-size: clamp(32px, 7.5vw, 68px);
+  line-height: 1.1;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, .7);
+}
+
+.btn 
+{
+  padding: 16px 28px;
+  background: #b3363a;
+  color: #f3eae6;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.btn:hover { filter: brightness(1.1); }
+
+/* Ramka na film w proporcjach 16:9 */
+.trailer 
+{
+  width: min(760px, 100%);
+  aspect-ratio: 16 / 9;
+  margin-top: 104px; /* miejsce nad ramką na wychylonego gnoma */
+  background: #000;
+  border: 1px solid #241615;
+}
+/* Osadzony film wypełnia całą ramkę */
+.trailer iframe { display: block; width: 100%; height: 100%; border: 0; }
+
+.gnome
+{
+  position: absolute;
+  left: -201px;
+  top: -201px;
+  width: 400px;
+  height: 400px;
+  z-index: 2;            /* nad osłoną trailera (z-index: 1) */
+  pointer-events: none;  /* klikalne są tylko .gnome-hit i wysunięty gnom */
+  clip-path: polygon(0 0, 100% 0, 100% 50%, 50% 50%, 50% 100%, 0 100%);
+}
+.gnome-pivot
+{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  transform: rotate(-45deg);
+}
+
+/* Pole najechania: pokrywa czubek czapki w spoczynku */
+.gnome-hit
+{
+  position: absolute;
+  left: -50px;
+  top: -64px;
+  width: 100px;
+  height: 100px;
+  pointer-events: auto;
+  cursor: pointer;
+  outline: none;
+}
+
+/* W spoczynku obrazek jest wsunięty za róg – widać tylko czubek czapki */
+.gnome-img
+{
+  position: absolute;
+  left: -147px;
+  top: -175px;
+  width: 300px;
+  height: 300px;
+  pointer-events: none;
+  transform: translateY(50px);
+  transition: transform .8s cubic-bezier(.34, 1.56, .64, 1); /* lekkie "wyskoczenie" */
+}
+/* Po najechaniu (lub dotknięciu/fokusie na telefonie) gnom się wysuwa */
+.gnome-pivot:hover .gnome-img,
+.gnome-pivot:focus-within .gnome-img { transform: translateY(-60px); pointer-events: auto; }
+
+/* Na telefonach gnom jest mniejszy (skalowanie względem rogu) */
+@media (max-width: 600px) { .gnome { transform: scale(.6); } }
+
+.fallback { margin: 12px 0 0; font-size: 14px; font-style: italic; color: #76827e; }
+.fallback a { color: #c9605f; }
+
+main, footer { max-width: 920px; margin: 0 auto; padding: 0 16px; }
+
+/* Sekcje oddzielone cienką linią (poza ostatnią) */
+section { padding: 44px 0; border-bottom: 1px solid #1a2221; }
+section:last-child { border: 0; }
+
+/* Nagłówki sekcji i szerokość akapitów dla wygodnego czytania */
+h2 { margin: 0 0 18px; font-size: clamp(18px, 3.4vw, 26px); letter-spacing: .06em; text-transform: uppercase; }
+p { max-width: 68ch; }
+
+.links, .shots 
+{
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* Linki: kolumny min. 230 px, rozciągają się na całą szerokość */
+.links { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+/* Galeria: kafelki min. 240 px, tyle kolumn ile się zmieści */
+.shots { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+
+.links a 
+{
+  display: block;
+  padding: 16px 18px;
+  background: #0d1111;
+  border: 1px solid #1a2221;
+  text-decoration: none;
+}
+.links a:hover { border-color: #b3363a; }
+
+.shots li 
+{
+  display: flex;
+  align-items: flex-end;
+  aspect-ratio: 4 / 3;
+  padding: 10px 12px;
+  background: #b3363a;
+  border: 1px solid #1a2221;
+  color: #76827e;
+  font-size: 14px;
+  font-style: italic;
+}
+
+.shots img { width: 100%; height: 100%; object-fit: cover; }
+
+footer { padding-block: 28px 48px; border-top: 1px solid #1a2221; font-size: 14px; color: #76827e; }
+footer p { margin: 0 0 4px; }
+
+
+/* ===== Latarka: tekstura light.png podążająca za kursorem ===== */
+
+/* Ciemna nakładka na cały ekran z "dziurą" w kształcie latarki: gradient jest
+   przezroczysty tam, gdzie ma świecić, i czarny tam, gdzie ma być ciemno.
+   Kolejne wartości rgba(0,0,0, X) to ciemność w danym miejscu (0 = pełne światło,
+   .95 = prawie czarno) – zmieniając je, zmieniasz pierścienie światła.
+   --x, --y: pozycja światła (ustawia script.js), --r: promień światła.
+   pointer-events: none nie blokuje klikania w stronę. */
+.flashlight
+{
+  --x: 50vw;
+  --y: 40vh;
+  --r: 360px;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  background: radial-gradient(
+    circle var(--r) at var(--x) var(--y),
+    rgba(0, 0, 0, 0)   0%,
+    rgba(0, 0, 0, 0)   8%,
+    rgba(0, 0, 0, .35) 14%,
+    rgba(0, 0, 0, .55) 24%,
+    rgba(0, 0, 0, .35) 32%,
+    rgba(0, 0, 0, .40) 50%,
+    rgba(0, 0, 0, .30) 60%,
+    rgba(0, 0, 0, .50) 75%,
+    rgba(0, 0, 0, .85) 88%,
+    rgba(0, 0, 0, .95) 100%
+  );
+  transition: opacity .3s;
+}
+
+.flashlight.off,
+.flashlight.watching { opacity: 0; }
+
+/* position: relative na trailerze jest potrzebne, żeby osłona
+   (position: absolute) pokrywała dokładnie ramkę z filmem */
+.trailer { position: relative; }
+/* Osłona na trailerze: łapie ruch myszy, którego iframe by nie przepuścił.
+   Klasa .hidden ukrywa ją (np. po kliknięciu), by film dało się obsługiwać. */
+.trailer-shield { position: absolute; inset: 0; z-index: 1; cursor: pointer; }
+.trailer-shield.hidden { display: none; }
+
+.flashlight-toggle
+{
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 60;
+  padding: 10px 16px;
+  background: #0d1111;
+  color: #c3cac6;
+  border: 1px solid #b3363a;
+  font: 14px Georgia, "Times New Roman", serif;
+  letter-spacing: .06em;
+  cursor: pointer;
+}
+.flashlight-toggle:hover { filter: brightness(1.2); }
+
+/* Na telefonach krąg światła jest mniejszy */
+@media (max-width: 600px) { .flashlight { --r: 210px; } }
