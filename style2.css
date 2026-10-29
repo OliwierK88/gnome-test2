@@ -31,7 +31,7 @@ body::before
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: url("images/tlo2.png") center / cover no-repeat;
+  background: url("images/tlo2.png") center;
   -webkit-mask-image: linear-gradient(to right,
     #000 0, #000 calc(50% - 700px), transparent calc(50% - 560px),
     transparent calc(50% + 560px), #000 calc(50% + 700px), #000 100%);
